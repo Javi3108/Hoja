@@ -1,1 +1,1 @@
-web: python migrate.py && gunicorn hojavida_project.wsgi
+web: python migrate.py && gunicorn hojavida_project.wsgi:application
