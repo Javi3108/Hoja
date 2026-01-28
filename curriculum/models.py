@@ -77,18 +77,9 @@ class ExperienciaLaboral(models.Model):
     descripcion = models.TextField()
     activo = models.BooleanField(default=True)
 
-class ExperienciaLaboral(models.Model):
-    cargo = models.CharField(max_length=150)
-    empresa = models.CharField(max_length=150)
-    fecha_inicio = models.DateField(validators=[validar_no_futuro])
-    fecha_fin = models.DateField(null=True, blank=True, help_text="Vacío si es Actual", validators=[validar_no_futuro])
-    descripcion = models.TextField()
-    activo = models.BooleanField(default=True)
-
     class Meta:
         verbose_name = "Experiencia Laboral"
         verbose_name_plural = "2. Trayectoria Profesional"
-        # CAMBIO AQUÍ: Eliminamos el '-' para que sea ascendente (antiguo a nuevo)
         ordering = ['fecha_inicio'] 
 
     def clean(self):
