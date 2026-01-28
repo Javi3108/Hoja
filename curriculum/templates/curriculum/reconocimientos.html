@@ -1,0 +1,74 @@
+{% extends 'curriculum/base.html' %}
+
+{% block title %}Premios & Menciones | Alejandro Parrales{% endblock %}
+
+{% block content %}
+<div class="fade-in max-w-6xl mx-auto pb-20">
+    <h2 class="text-6xl md:text-7xl font-black italic uppercase mb-20 tracking-tighter text-[#1a1a1a] leading-none animate-in slide-in-from-left duration-700">
+        Premios & <br><span class="text-blue-500">Menciones</span>
+    </h2>
+
+    <div class="space-y-12">
+        {% for rec in reconocimientos %}
+        <div class="group bg-white p-10 md:p-14 rounded-[4rem] border border-gray-100 hover:shadow-2xl transition-all duration-500 flex flex-col md:flex-row items-center gap-10 md:gap-16 overflow-hidden relative hover:-translate-y-1">
+            
+            <!-- Decoración de fondo -->
+            <div class="absolute right-0 top-0 w-80 h-80 bg-blue-50/50 rounded-full blur-[100px] -z-0"></div>
+            
+            <!-- Icono Trofeo -->
+            <div class="w-32 h-32 bg-gradient-to-br from-blue-50 to-white rounded-[2.5rem] flex items-center justify-center text-[#3b82f6] shrink-0 border border-blue-100 shadow-xl group-hover:rotate-12 transition-all duration-500 relative z-10">
+                <i data-lucide="trophy" size="56"></i>
+            </div>
+            
+            <!-- Contenido -->
+            <div class="relative z-10 flex-grow text-center md:text-left">
+                {% if rec.codigo_registro %}
+                <span class="text-[10px] font-black text-[#3b82f6] border border-blue-100 px-6 py-2 rounded-full uppercase tracking-[0.3em] bg-blue-50/30">
+                    Verificación: {{ rec.codigo_registro }}
+                </span>
+                {% endif %}
+                
+                <!-- Título del logro -->
+                <h3 class="text-4xl md:text-5xl font-black italic uppercase mt-6 text-gray-900 leading-none tracking-tighter group-hover:text-blue-600 transition-colors">
+                    {{ rec.nombre }}
+                </h3>
+                
+                <!-- Institución y Fecha (Usando fecha_obtencion del modelo) -->
+                <div class="flex flex-col md:flex-row md:items-center gap-2 md:gap-4 mt-5">
+                    <p class="text-gray-400 font-bold text-sm uppercase tracking-[0.4em]">
+                        {{ rec.institucion }}
+                    </p>
+                    <span class="hidden md:block text-gray-200">|</span>
+                    <p class="text-blue-500 font-black italic text-sm uppercase tracking-widest bg-blue-50 px-3 py-1 rounded-lg w-fit mx-auto md:mx-0">
+                        {{ rec.fecha_obtencion|date:"Y"|default:'N/A' }}
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-span-full py-24 text-center bg-white rounded-[4rem] border-2 border-dashed border-gray-100">
+            <i data-lucide="award" size="48" class="mx-auto mb-4 text-gray-100"></i>
+            <p class="text-gray-400 italic text-xl font-bold uppercase tracking-widest">Aún no se han registrado méritos en el panel de control.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+    });
+</script>
+
+<style>
+    .fade-in {
+        animation: fadeIn 0.8s ease-out;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+{% endblock %}

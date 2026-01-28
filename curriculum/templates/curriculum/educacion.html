@@ -1,0 +1,74 @@
+{% extends 'curriculum/base.html' %}
+
+{% block title %}Formación Académica{% endblock %}
+
+{% block content %}
+<div class="fade-in px-4 py-12 max-w-7xl mx-auto">
+    <!-- Encabezado Estilizado -->
+    <h2 class="text-5xl md:text-7xl font-black italic uppercase mb-20 tracking-tighter text-[#1a1a1a] leading-none">
+        Formación <br><span class="text-blue-500">Académica</span>
+    </h2>
+
+    <!-- Grid de Contenido -->
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+        {% for estudio in estudios %}
+        <div class="bg-white p-10 rounded-[3.5rem] border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-700 relative overflow-hidden group flex flex-col h-full transform hover:-translate-y-2">
+            
+            <!-- Efecto de gradiente sutil al hacer hover -->
+            <div class="absolute -right-10 -top-10 w-40 h-40 bg-blue-50 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 -z-0"></div>
+            
+            <!-- Icono con Lucide -->
+            <div class="w-20 h-20 bg-gray-50 text-blue-500 rounded-3xl flex items-center justify-center mb-10 shadow-inner group-hover:bg-blue-500 group-hover:text-white transition-all duration-500 relative z-10">
+                <i data-lucide="graduation-cap" class="w-10 h-10"></i>
+            </div>
+            
+            <!-- Información Principal -->
+            <div class="relative z-10 flex-grow">
+                <h3 class="text-2xl font-black uppercase text-gray-900 leading-tight mb-4 group-hover:text-blue-600 transition-colors">
+                    {{ estudio.titulo }}
+                </h3>
+                
+                <p class="font-bold text-sm text-gray-400 uppercase tracking-widest leading-relaxed">
+                    {{ estudio.institucion }}
+                </p>
+            </div>
+            
+            <!-- Divisor y Footer -->
+            <div class="mt-10 pt-8 border-t border-gray-100 flex justify-between items-center relative z-10">
+                <div class="space-y-1">
+                    <p class="text-[9px] font-black text-gray-300 uppercase tracking-widest">Cronología</p>
+                    <div class="flex items-center gap-2">
+                        <span class="px-3 py-1 bg-blue-50 text-blue-600 text-[10px] font-black rounded-full">
+                            {{ estudio.fecha_inicio|date:"Y"|default:'N/A' }} — {{ estudio.fecha_fin|date:"Y"|default:'Presente' }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Botón de Acción (Certificado) -->
+                {% if estudio.certificado_pdf %}
+                <a href="{{ estudio.certificado_pdf.url }}" 
+                   target="_blank" 
+                   class="flex items-center justify-center w-14 h-14 bg-[#1a1a1a] text-white rounded-2xl shadow-xl hover:bg-blue-600 hover:scale-110 transition-all duration-300 group/btn"
+                   aria-label="Descargar Certificado">
+                    <i data-lucide="external-link" class="w-6 h-6 group-hover/btn:rotate-45 transition-transform"></i>
+                </a>
+                {% else %}
+                <div class="flex items-center justify-center w-14 h-14 bg-gray-50 text-gray-300 rounded-2xl border border-dashed border-gray-200 cursor-help" 
+                     title="Sin documento adjunto">
+                    <i data-lucide="file-minus" class="w-6 h-6"></i>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <!-- Estado Vacío -->
+        <div class="col-span-full py-32 text-center bg-gray-50 rounded-[5rem] border-2 border-dashed border-gray-200">
+            <div class="bg-white w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-8 shadow-sm">
+                <i data-lucide="archive" class="text-gray-200 w-12 h-12"></i>
+            </div>
+            <h4 class="text-gray-400 font-black uppercase tracking-widest text-sm">Aún no hay registros académicos</h4>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

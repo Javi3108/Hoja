@@ -1,0 +1,334 @@
+{% extends 'curriculum/base.html' %}
+
+{% block title %}Venta de Garage | Alejandro Parrales{% endblock %}
+
+{% block content %}
+<div class="fade-in relative pb-20 px-4 max-w-7xl mx-auto">
+    <!-- Botón Flotante del Carrito -->
+    <div class="fixed top-8 right-8 z-[110] no-print">
+        <button type="button" onclick="toggleCartModal()" class="relative bg-[#1a1a1a] text-white p-5 rounded-2xl shadow-xl hover:scale-110 hover:bg-blue-500 transition-all duration-500 group border-2 border-white">
+            <i data-lucide="shopping-bag" size="24"></i>
+            <span id="cart-count" class="absolute -top-1 -right-1 bg-blue-500 text-white text-[10px] font-black w-6 h-6 flex items-center justify-center rounded-full scale-0 transition-transform duration-500 shadow-md border border-white">0</span>
+        </button>
+    </div>
+
+    <div class="mb-12">
+        <h2 class="text-6xl font-black italic uppercase tracking-tighter text-[#1a1a1a] leading-none">
+            Venta<br><span class="text-blue-500">Garaje</span>
+        </h2>
+        <div class="h-2 w-20 bg-blue-400 mt-4 rounded-full"></div>
+    </div>
+
+    <!-- Grid de Productos -->
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {% for item in productos %}
+        <div class="bg-white p-6 rounded-[3rem] border border-gray-100 shadow-sm relative overflow-hidden group hover:shadow-xl transition-all duration-500 flex flex-col h-full">
+            
+            <!-- Etiqueta de Precio -->
+            <div class="absolute right-5 top-5 z-20">
+                <div class="bg-[#1a1a1a] text-white px-5 py-2 rounded-xl group-hover:bg-blue-500 transition-all shadow-md">
+                    <span class="text-xl font-black tracking-tighter">${{ item.precio|floatformat:0 }}</span>
+                </div>
+            </div>
+
+            <!-- Imagen del Producto -->
+            <div class="w-full h-48 mb-6 overflow-hidden rounded-3xl bg-gray-50/50 relative border border-gray-50 group-hover:bg-white transition-colors duration-500 p-3">
+                {% if item.imagen %}
+                    <img src="{{ item.imagen.url }}" 
+                         alt="{{ item.nombre_producto|escape }}" 
+                         loading="lazy"
+                         class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700">
+                {% else %}
+                    <div class="w-full h-full flex flex-col items-center justify-center text-gray-200">
+                        <i data-lucide="image" size="32" class="mb-2 opacity-10"></i>
+                        <span class="text-[8px] font-black uppercase tracking-widest">Sin Foto</span>
+                    </div>
+                {% endif %}
+
+                <!-- Badges -->
+                <div class="absolute bottom-3 left-3 right-3 flex justify-between items-center z-30">
+                    <div class="px-3 py-1 bg-white/90 backdrop-blur-md rounded-lg shadow-sm border border-white/50 flex items-center gap-2">
+                        {% if item.estado == 'Nuevo' %}
+                            <span class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
+                            <span class="text-[8px] font-black text-indigo-600 uppercase tracking-widest">Nuevo</span>
+                        {% elif item.estado == 'Bueno' %}
+                            <span class="w-2 h-2 rounded-full bg-cyan-500"></span>
+                            <span class="text-[8px] font-black text-cyan-600 uppercase tracking-widest">Bueno</span>
+                        {% else %}
+                            <span class="w-2 h-2 rounded-full bg-sky-400"></span>
+                            <span class="text-[8px] font-black text-sky-500 uppercase tracking-widest">Regular</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="px-2 py-1 bg-[#1a1a1a]/80 backdrop-blur-sm text-white rounded-md text-[7px] font-black uppercase tracking-tighter">
+                        {{ item.fecha_publicacion|date:"d M, Y" }}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Detalles -->
+            <div class="px-1 mb-6 flex-grow flex flex-col">
+                <div class="flex items-center gap-2 mb-2">
+                    <div class="h-1 w-4 bg-blue-400 rounded-full"></div>
+                    <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Stock: {{ item.stock }} disponibles</span>
+                </div>
+                
+                <h3 class="text-2xl font-black uppercase text-gray-900 leading-tight mb-3 group-hover:text-blue-500 transition-colors pr-12">
+                    {{ item.nombre_producto }}
+                </h3>
+                
+                <div class="relative">
+                    <p id="desc-{{ item.id }}" class="text-gray-500 text-sm font-medium italic leading-relaxed line-clamp-2 transition-all duration-500">
+                        "{{ item.descripcion }}"
+                    </p>
+                    <button type="button" onclick="toggleDescription('{{ item.id }}')" id="btn-desc-{{ item.id }}" class="text-[9px] font-black uppercase text-blue-400 mt-2 hover:text-blue-600 transition-colors tracking-widest">
+                        Leer más +
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Botones con Validación Estética -->
+            <div class="pt-5 border-t border-gray-50 flex flex-col gap-5 relative z-10 mt-auto">
+                <div class="flex items-center justify-between gap-4">
+                    <div class="flex items-center bg-gray-50 rounded-xl p-1 border border-gray-100">
+                        <button type="button" onclick="decrementQty('{{ item.id }}')" class="p-2 hover:text-blue-500 transition-colors"><i data-lucide="minus" size="14"></i></button>
+                        <input type="number" id="qty-{{ item.id }}" min="1" max="{{ item.stock }}" value="1" class="bg-transparent w-10 text-center font-black text-xs outline-none" readonly>
+                        <button type="button" onclick="incrementQty('{{ item.id }}', {{ item.stock }})" class="p-2 hover:text-blue-500 transition-colors"><i data-lucide="plus" size="14"></i></button>
+                    </div>
+                    
+                    <button 
+                        type="button"
+                        id="add-btn-{{ item.id }}"
+                        data-id="{{ item.id }}"
+                        data-nombre="{{ item.nombre_producto|escapejs }}"
+                        data-precio="{{ item.precio|default:0|floatformat:2 }}"
+                        data-imagen="{{ item.imagen.url|default:'' }}"
+                        data-qty="qty-{{ item.id }}"
+                        data-stock="{{ item.stock|default:0 }}"
+                        onclick="addToCart(this)"
+                        class="flex-grow flex items-center justify-center gap-3 py-4 bg-[#1a1a1a] text-white rounded-2xl hover:bg-blue-500 transition-all duration-300 group/btn font-black text-[10px] uppercase tracking-widest shadow-lg active:scale-95 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed disabled:transform-none"
+                    >
+                        <span id="btn-text-{{ item.id }}">Agregar</span> 
+                        <i data-lucide="shopping-cart" size="16" id="btn-icon-{{ item.id }}" class="group-hover/btn:rotate-12 transition-transform"></i>
+                    </button>
+                </div>
+                
+                <div class="flex justify-between items-center opacity-30">
+                    <span class="text-[9px] font-black uppercase tracking-tighter italic">Ref #{{ item.id }}</span>
+                    <i data-lucide="sparkles" size="12" class="text-blue-400"></i>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-span-full py-32 text-center bg-white rounded-[4rem] border border-dashed border-gray-100">
+            <i data-lucide="tag" size="48" class="mx-auto mb-4 text-gray-200"></i>
+            <p class="text-gray-400 font-bold uppercase tracking-widest text-xs italic">No hay productos en el catálogo actualmente</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Modal del Carrito -->
+<div id="cart-modal" class="fixed inset-0 z-[150] hidden flex justify-end">
+    <div class="absolute inset-0 bg-transparent" onclick="toggleCartModal()"></div>
+    <div class="relative w-full max-w-lg bg-white shadow-[-30px_0_60px_rgba(0,0,0,0.1)] flex flex-col animate-in slide-in-from-right duration-500">
+        <div class="p-10 border-b border-gray-50 flex justify-between items-center bg-gray-50/50">
+            <div>
+                <h3 class="text-3xl font-black uppercase tracking-tighter text-gray-900 leading-none">Mi Bolsa</h3>
+                <p id="modal-count" class="text-[10px] font-black text-blue-400 uppercase tracking-widest mt-2">0 Artículos seleccionados</p>
+            </div>
+            <button type="button" onclick="toggleCartModal()" class="p-4 hover:bg-white rounded-2xl transition-all text-gray-400 hover:text-blue-500 shadow-sm border border-transparent hover:border-gray-100">
+                <i data-lucide="x" size="24"></i>
+            </button>
+        </div>
+        <div id="cart-items" class="flex-grow overflow-y-auto p-10 space-y-8 no-scrollbar scroll-smooth"></div>
+        <div class="p-10 bg-white border-t border-gray-50 space-y-6">
+            <div class="flex justify-between items-end">
+                <span class="text-xs font-black text-gray-400 uppercase tracking-widest">Total del Pedido</span>
+                <span id="cart-total" class="text-4xl font-black tracking-tighter text-gray-900">$0</span>
+            </div>
+            <a id="whatsapp-checkout" href="#" target="_blank" class="w-full py-6 bg-[#1a1a1a] text-white rounded-[2.5rem] font-black uppercase text-xs tracking-[0.4em] flex items-center justify-center gap-4 hover:bg-blue-600 hover:-translate-y-1 transition-all duration-500 shadow-2xl">
+                <i data-lucide="message-circle" size="20"></i>
+                Completar Pedido
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    let cart = JSON.parse(localStorage.getItem('garage_cart')) || [];
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        updateCartBadge();
+        checkButtonStates();
+        if (window.lucide) lucide.createIcons();
+    });
+
+    function toggleDescription(id) {
+        const desc = document.getElementById('desc-' + id);
+        const btn = document.getElementById('btn-desc-' + id);
+        if (desc.classList.contains('line-clamp-2')) {
+            desc.classList.remove('line-clamp-2');
+            btn.innerText = 'Ver menos -';
+        } else {
+            desc.classList.add('line-clamp-2');
+            btn.innerText = 'Leer más +';
+        }
+    }
+
+    function incrementQty(id, maxStock) {
+        const input = document.getElementById('qty-' + id);
+        if (input) {
+            let current = parseInt(input.value) || 1;
+            if (current < maxStock) {
+                input.value = current + 1;
+            }
+        }
+    }
+
+    function decrementQty(id) {
+        const input = document.getElementById('qty-' + id);
+        if (input) {
+            let current = parseInt(input.value) || 1;
+            if (current > 1) input.value = current - 1;
+        }
+    }
+
+    // Función para revisar si los botones deben bloquearse estéticamente
+    function checkButtonStates() {
+        document.querySelectorAll('[id^="add-btn-"]').forEach(btn => {
+            const id = btn.dataset.id;
+            const stockMax = parseInt(btn.dataset.stock);
+            const existingItem = cart.find(i => i.id === id);
+            const currentQtyInCart = existingItem ? existingItem.quantity : 0;
+            const btnText = document.getElementById('btn-text-' + id);
+            const btnIcon = document.getElementById('btn-icon-' + id);
+
+            if (currentQtyInCart >= stockMax) {
+                btn.disabled = true;
+                btnText.innerText = "Límite Alcanzado";
+                if(btnIcon) btnIcon.classList.add('hidden');
+            } else {
+                btn.disabled = false;
+                btnText.innerText = "Agregar";
+                if(btnIcon) btnIcon.classList.remove('hidden');
+            }
+        });
+    }
+
+    function addToCart(btn) {
+        const id = btn.dataset.id;
+        const nombre = btn.dataset.nombre;
+        const precioRaw = btn.dataset.precio;
+        const imagen = btn.dataset.imagen;
+        const qtyId = btn.dataset.qty;
+        const stockMax = parseInt(btn.dataset.stock);
+
+        const input = document.getElementById(qtyId);
+        const qtyToAdd = input ? parseInt(input.value) : 1;
+        const cleanPrice = parseFloat(precioRaw.replace(',', '.')) || 0;
+        
+        const existingItem = cart.find(i => i.id === id);
+        const currentQtyInCart = existingItem ? existingItem.quantity : 0;
+
+        if (currentQtyInCart + qtyToAdd > stockMax) {
+            return; // Bloqueo silencioso si se intenta hackear el botón
+        }
+
+        if (existingItem) {
+            existingItem.quantity += qtyToAdd;
+        } else {
+            cart.push({ id, name: nombre, price: cleanPrice, image: imagen, quantity: qtyToAdd, stockMax: stockMax });
+        }
+        
+        localStorage.setItem('garage_cart', JSON.stringify(cart));
+        updateCartBadge();
+        checkButtonStates(); // Actualizar estado de los botones inmediatamente
+        
+        // Feedback rápido antes de que se bloquee
+        const btnText = document.getElementById('btn-text-' + id);
+        if (!btn.disabled) {
+            const originalText = btnText.innerText;
+            btnText.innerText = '¡Agregado!';
+            setTimeout(() => { 
+                if(!btn.disabled) btnText.innerText = originalText; 
+            }, 1000);
+        }
+        
+        if(input) input.value = 1;
+    }
+
+    function removeFromCart(index) {
+        cart.splice(index, 1);
+        localStorage.setItem('garage_cart', JSON.stringify(cart));
+        renderCart();
+        updateCartBadge();
+        checkButtonStates(); // Rehabilitar botones si se eliminan del carrito
+    }
+
+    function updateCartBadge() {
+        const badge = document.getElementById('cart-count');
+        const totalItems = cart.reduce((acc, curr) => acc + curr.quantity, 0);
+        if (badge) {
+            badge.innerText = totalItems;
+            badge.classList.toggle('scale-0', totalItems === 0);
+            badge.classList.toggle('scale-100', totalItems > 0);
+        }
+    }
+
+    function renderCart() {
+        const container = document.getElementById('cart-items');
+        const totalEl = document.getElementById('cart-total');
+        const checkoutBtn = document.getElementById('whatsapp-checkout');
+        
+        if (cart.length === 0) {
+            container.innerHTML = `<div class="py-20 text-center text-gray-300 font-black uppercase text-[10px] tracking-widest opacity-50">Bolsa Vacía</div>`;
+            totalEl.innerText = "$0";
+            checkoutBtn.classList.add('opacity-40', 'pointer-events-none');
+            return;
+        }
+
+        let subtotal = 0;
+        container.innerHTML = cart.map((item, index) => {
+            subtotal += (item.price * item.quantity);
+            return `
+                <div class="flex items-center gap-6">
+                    <div class="w-16 h-16 bg-gray-50 rounded-2xl overflow-hidden shrink-0">
+                        ${item.image ? `<img src="${item.image}" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center text-gray-200"><i data-lucide="image" size="16"></i></div>`}
+                    </div>
+                    <div class="flex-grow">
+                        <h4 class="text-[10px] font-black uppercase text-gray-900 leading-tight">${item.name}</h4>
+                        <p class="text-blue-500 font-bold text-[9px]">$${item.price.toFixed(0)} x ${item.quantity}</p>
+                    </div>
+                    <button onclick="removeFromCart(${index})" class="text-gray-300 hover:text-red-500 transition-colors">
+                        <i data-lucide="trash-2" size="18"></i>
+                    </button>
+                </div>
+            `;
+        }).join('');
+
+        totalEl.innerText = `$${subtotal.toFixed(0)}`;
+        checkoutBtn.classList.remove('opacity-40', 'pointer-events-none');
+        
+        const message = encodeURIComponent(`¡Hola Alejandro! 👋 Me interesan estos artículos:\n\n` + 
+            cart.map(i => `✨ ${i.quantity}x ${i.name} ($${i.price * i.quantity})`).join('\n') + 
+            `\n\n💵 *Total: $${subtotal}*`);
+        
+        const phone = "{% if perfil %}{{ perfil.telefono }}{% endif %}";
+        checkoutBtn.href = `https://wa.me/${phone}?text=${message}`;
+        if (window.lucide) lucide.createIcons();
+    }
+
+    function toggleCartModal() {
+        const modal = document.getElementById('cart-modal');
+        modal.classList.toggle('hidden');
+        if (!modal.classList.contains('hidden')) renderCart();
+    }
+</script>
+
+<style>
+    input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+</style>
+{% endblock %}

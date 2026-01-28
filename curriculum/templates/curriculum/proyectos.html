@@ -1,0 +1,121 @@
+{% extends 'curriculum/base.html' %}
+
+{% block title %}Productos Académicos | Alejandro Parrales{% endblock %}
+
+{% block content %}
+<div class="fade-in max-w-7xl mx-auto px-4 pb-20">
+    <!-- Encabezado con Estilo -->
+    <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+        <div class="animate-in slide-in-from-left duration-700">
+            <h2 class="text-6xl md:text-7xl font-black italic uppercase tracking-tighter text-[#1a1a1a] leading-none">
+                Productos <br><span class="text-indigo-500">Académicos</span>
+            </h2>
+            <div class="h-2 w-24 bg-indigo-400 mt-6 rounded-full"></div>
+        </div>
+        <div class="text-right border-r-4 border-indigo-500 pr-6 animate-in fade-in duration-1000">
+            <p class="text-gray-400 font-bold text-[10px] uppercase tracking-[0.4em]">Producción Intelectual & Técnica</p>
+            <p class="text-indigo-300 text-[9px] font-black uppercase mt-2 tracking-widest">Sincronizado con Base de Datos</p>
+        </div>
+    </div>
+
+    <!-- Rejilla de Productos -->
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+        {% for prod in proyectos %}
+        <div class="bg-white p-8 md:p-10 rounded-[4rem] border border-gray-100 shadow-sm relative overflow-hidden group hover:shadow-2xl transition-all duration-500 flex flex-col h-full hover:-translate-y-2">
+            
+            <!-- Decoración de fondo sutil -->
+            <div class="absolute -right-10 -top-10 w-40 h-40 bg-indigo-50 rounded-full blur-3xl -z-0 group-hover:bg-indigo-100 transition-colors duration-700"></div>
+
+            <div class="p-6 bg-indigo-50 text-indigo-500 rounded-[2.5rem] w-fit mb-8 group-hover:rotate-12 transition-all duration-500 relative z-10 border border-indigo-100">
+                <i data-lucide="layers" size="32"></i>
+            </div>
+            
+            <!-- Conexión: nombre del producto -->
+            <h3 class="text-3xl font-black uppercase text-gray-900 leading-tight mb-4 relative z-10 group-hover:text-indigo-600 transition-colors duration-300">
+                {{ prod.nombre }}
+            </h3>
+            
+            <!-- Conexión: categorías (Acceso directo a la relación ManyToMany) -->
+            <div class="flex flex-wrap gap-2 mb-8 relative z-10">
+                {% with cats=prod.categorias.all %}
+                    {% if cats %}
+                        {% for cat in cats %}
+                        <span class="px-4 py-1.5 bg-gray-50 text-gray-400 rounded-xl text-[9px] font-black uppercase tracking-widest border border-gray-100 group-hover:border-indigo-200 group-hover:text-indigo-500 group-hover:bg-indigo-50 transition-all duration-300">
+                            #{{ cat.nombre }}
+                        </span>
+                        {% endfor %}
+                    {% else %}
+                        <span class="text-[9px] font-bold text-gray-300 uppercase tracking-widest italic">Sin Clasificar</span>
+                    {% endif %}
+                {% endwith %}
+            </div>
+            
+            <!-- Conexión: descripción detallada -->
+            <div class="flex-grow relative z-10">
+                <p class="text-base text-gray-500 font-medium italic leading-relaxed mb-10">
+                    "{{ prod.descripcion }}"
+                </p>
+            </div>
+            
+            <!-- Conexión: registro_id y fecha_publicacion -->
+            <div class="pt-8 border-t border-gray-50 flex justify-between items-center relative z-10 mt-auto">
+                <div class="flex flex-col">
+                    <span class="text-[8px] text-gray-400 font-black uppercase tracking-tighter mb-1">ID / Registro</span>
+                    <span class="text-gray-800 text-[10px] font-black tracking-widest bg-gray-50 px-2 py-1 rounded-md">
+                        {{ prod.registro_id|default:"S/N" }}
+                    </span>
+                </div>
+                <div class="text-right">
+                    <span class="text-[8px] text-gray-400 font-black uppercase tracking-tighter mb-1 block">Publicación</span>
+                    <span class="text-indigo-500 text-[10px] font-black italic bg-indigo-50 px-2 py-1 rounded-md">
+                        {{ prod.fecha_publicacion|date:"Y-m-d"|default:'N/A' }}
+                    </span>
+                </div>
+            </div>
+            
+            <!-- Conexión: archivo (FileField) -->
+            <div class="mt-8 relative z-10">
+                {% if prod.archivo %}
+                <a href="{{ prod.archivo.url }}" 
+                   target="_blank" 
+                   class="w-full py-5 bg-[#1a1a1a] text-white rounded-[2rem] text-[10px] font-black uppercase text-center tracking-[0.3em] hover:bg-indigo-600 transition-all duration-300 shadow-xl flex items-center justify-center gap-3 active:scale-95">
+                    <i data-lucide="external-link" size="16" class="group-hover:animate-pulse"></i> 
+                    Obtener Recurso
+                </a>
+                {% else %}
+                <div class="w-full py-5 bg-gray-50 text-gray-300 rounded-[2rem] text-[10px] font-black uppercase text-center tracking-[0.3em] border border-dashed border-gray-200 cursor-not-allowed">
+                    No Disponible
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-span-full py-32 text-center bg-white rounded-[5rem] border-4 border-dashed border-gray-50">
+            <div class="bg-gray-50 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i data-lucide="archive-x" size="40" class="text-gray-200"></i>
+            </div>
+            <p class="text-2xl text-gray-300 italic font-black uppercase tracking-widest">Sin productos académicos registrados.</p>
+            <p class="text-xs text-gray-400 mt-2">Verifica que los productos estén marcados como 'Activo' en el Admin.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+    });
+</script>
+
+<style>
+    .fade-in {
+        animation: fadeIn 0.8s ease-out;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+{% endblock %}

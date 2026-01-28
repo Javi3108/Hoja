@@ -1,0 +1,129 @@
+/* --- VARIABLES DE COLOR --- */
+:root {
+    --primary-bg: #0f1115;
+    --secondary-bg: #1a1a1a;
+    --accent-pink: #ff7eb9;
+    --text-main: #e2e8f0;
+    --text-muted: #94a3b8;
+    --border-color: rgba(255, 255, 255, 0.05);
+}
+
+/* --- ESTRUCTURA PRINCIPAL --- */
+body, #container {
+    background-color: var(--primary-bg) !important;
+    color: var(--text-main) !important;
+}
+
+#header {
+    background: var(--secondary-bg) !important;
+    border-bottom: 3px solid var(--accent-pink) !important;
+    color: white !important;
+    padding: 15px 40px !important;
+}
+
+#header a { color: white !important; }
+#header a:hover { color: var(--accent-pink) !important; }
+
+/* Branding */
+#branding h1 {
+    font-weight: 900 !important;
+    font-style: italic !important;
+    text-transform: uppercase !important;
+    letter-spacing: -1px !important;
+}
+
+#branding h1 span { color: var(--accent-pink) !important; }
+
+/* --- BARRA LATERAL (NAV) --- */
+.nav-sidebar {
+    background: var(--secondary-bg) !important;
+    border-right: 1px solid var(--border-color) !important;
+}
+
+.nav-sidebar .module th {
+    background: transparent !important;
+    color: var(--accent-pink) !important;
+    font-size: 10px !important;
+    letter-spacing: 2px !important;
+    text-transform: uppercase !important;
+}
+
+.nav-sidebar .module a:hover {
+    background: rgba(255, 126, 185, 0.1) !important;
+    color: var(--accent-pink) !important;
+}
+
+/* --- TABLAS Y LISTADOS --- */
+.results, #changelist {
+    background: var(--secondary-bg) !important;
+    border-radius: 20px !important;
+    overflow: hidden !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+#changelist table thead th {
+    background: rgba(255, 255, 255, 0.02) !important;
+    color: var(--text-muted) !important;
+    text-transform: uppercase !important;
+    font-size: 10px !important;
+    padding: 15px !important;
+}
+
+#changelist table tbody tr {
+    background: transparent !important;
+    border-bottom: 1px solid var(--border-color) !important;
+}
+
+#changelist table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.03) !important;
+}
+
+#changelist table tbody td a {
+    color: var(--accent-pink) !important;
+    font-weight: bold !important;
+}
+
+/* --- FORMULARIOS Y BOTONES --- */
+.submit-row {
+    background: var(--secondary-bg) !important;
+    border-radius: 15px !important;
+    padding: 20px !important;
+    margin-top: 20px !important;
+}
+
+input[type="submit"], .button, .addlink {
+    background: var(--accent-pink) !important;
+    border: none !important;
+    border-radius: 10px !important;
+    font-weight: 900 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+    padding: 10px 20px !important;
+    transition: all 0.3s ease !important;
+}
+
+input[type="submit"]:hover, .button:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 5px 15px rgba(255, 126, 185, 0.3) !important;
+    filter: brightness(1.1) !important;
+}
+
+/* Estilo para los campos de texto */
+input[type="text"], input[type="password"], textarea, select {
+    background: var(--primary-bg) !important;
+    border: 1px solid var(--border-color) !important;
+    color: white !important;
+    border-radius: 8px !important;
+    padding: 8px !important;
+}
+
+/* --- BREADCRUMBS --- */
+.breadcrumbs {
+    background: var(--primary-bg) !important;
+    color: var(--text-muted) !important;
+    font-size: 11px !important;
+    text-transform: uppercase !important;
+    font-weight: bold !important;
+}
+
+.breadcrumbs a { color: var(--text-muted) !important; }

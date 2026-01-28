@@ -1,0 +1,53 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | Panel Alejandro Parrales{% endblock %}
+
+{% block branding %}
+<div id="site-name">
+    <a href="{% url 'admin:index' %}" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
+        <h1 style="font-family: 'Inter', sans-serif; font-weight: 900; font-style: italic; text-transform: uppercase; color: #3b82f6; letter-spacing: -1px; margin: 0; font-size: 20px;">
+            ALEJANDRO <span style="color: white; filter: drop-shadow(0 0 5px rgba(59,130,246,0.5));">ADMIN</span>
+        </h1>
+    </a>
+</div>
+{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static 'admin_custom.css' %}">
+<style>
+    :root {
+        --primary: #3b82f6 !important;
+        --header-bg: #1a1a1a !important;
+    }
+
+    body {
+        background-color: #0f1115 !important;
+        color: #e0e0e0 !important;
+    }
+
+    #header {
+        background: var(--header-bg) !important;
+        border-bottom: 2px solid var(--primary) !important;
+    }
+    
+    .breadcrumbs {
+        background: #14161a !important;
+        border-bottom: 1px solid rgba(255,255,255,0.05) !important;
+    }
+
+    .module h2, .module caption, .column h2 {
+        background: var(--primary) !important;
+        color: white !important;
+    }
+
+    /* Forzar visibilidad de enlaces en el dashboard */
+    .module a:link, .module a:visited { color: #3b82f6 !important; }
+</style>
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static 'admin_custom.css' %}">
+{% endblock %}
